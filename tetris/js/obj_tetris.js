@@ -7,12 +7,12 @@ function () {
             this.y = y;
             this.spe = spe;
         }
-        // get x(){
-        //     return this.x;
-        // }
-        // get y(){
-        //     return this.y;
-        // }
+        get imageNumber(){
+            return this.spe%10;
+        }
+        get markNumber(){
+            return Math.floor(this.spe/10);
+        }
     }
     //tetrisクラス
     class Tetris {
@@ -62,21 +62,22 @@ function () {
                 this.marks[i].src = markUrls[i];
             }
             //canvasの設定
-            var canWid = 700;
-            var canHei = 600;
+            const canWid = 700;
+            const canHei = 600;
             var canvas = document.getElementById('canvas');
             canvas.width = canWid;//canvasの横幅
             canvas.height = canHei;//canvasの縦幅
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
-            this.ctx.drawImage( this.blockImages[1], this.blockSize*5, this.blockSize*5, this.blockSize, this.blockSize);
         }
         
         //マップを描画する関数
         fieldDraw() {
+            //可読性のために移動
+            var ctx = this.ctx;
             //キャンバスを初期化
-            this.ctx.fillStyle = "black";
-            this.ctx.fillRect(0, 0, 700, 600);
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, 700, 600);
             //field[][]を元に描画
             for(var y = 0; y < this.field.length; y++){
                 for(var x = 0; x < this.field[y].length; x++){
@@ -85,13 +86,13 @@ function () {
                             break;
                         case -1:
                             //壁を描画
-                            this.ctx.fillStyle = "green";
-                            this.ctx.fillRect(this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                            ctx.fillStyle = "green";
+                            ctx.fillRect(this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                             break;
                         default:
                             var imageNumber = this.field[y][x];
-                            this.ctx.drawImage( this.blockImages[imageNumber%10], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
-                            this.ctx.drawImage( this.marks[Math.floor(imageNumber/10)], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                            ctx.drawImage( this.blockImages[imageNumber%10], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                            ctx.drawImage( this.marks[Math.floor(imageNumber/10)], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                             break;
                     }
                 }
@@ -102,13 +103,13 @@ function () {
                     var block = this.blocks[i];
                     var x = block.x;
                     var y = block.y;
-                    this.ctx.drawImage( this.blockImages[block.spe%10], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
-                    this.ctx.drawImage( this.marks[Math.floor(block.spe/10)], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                    ctx.drawImage( this.blockImages[block.imageNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                    ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
-            this.ctx.fillStyle = "white";
-            this.ctx.fillRect(0, 0, 700, 50);
-            this.ctx.fillText("SCORE", 600, 120);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, 700, 50);
+            ctx.fillText("SCORE", 600, 120);
             //this.ctx.fillText(score, 600, 150);
         }
         //ブロックを生成する関数(引数x,y,spe戻り値block)
