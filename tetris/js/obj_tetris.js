@@ -58,29 +58,32 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,0,0,0,0,0,1,1,1,0,0,-1],
-                [-1,0,1,1,1,1,1,1,1,0,0,-1],
-                [-1,1,21,1,1,1,1,1,11,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,11,0,0,0,0,0,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
             this.currentBlock = false;
+            this.gameover = false;
             this.blockSize = 50;
             this.status = new Status();
-            //ブロックの画像配列
             var imagePass = [
                 "images/black.png",
+                "images/red.png",
+                "images/lightgreen.png",
                 "images/blue.png",
-                "images/lightblue.png",
                 "images/orange.png",
                 "images/purple.png",
-                "images/red.png",
-                "images/yellow.png",
+                "images/lightblue.png",
                 "images/yellowgreen.png"
             ];
             var markPass = [
                 "marks/Transparent.png",
-                "marks/bomb2.png",
+                "marks/star05.png",
+                "marks/star04.png",
+                "marks/star03.png",
+                "marks/star02.png",
                 "marks/star01.png",
             ];
             this.blockImages = new Array();
@@ -97,10 +100,8 @@ function () {
             this.adm = new AudioManager();
             //canvasの設定
             var canvas = document.getElementById('canvas');
-            const canWid = 900;
-            const canHei = 600;
-            canvas.width = canWid;
-            canvas.height = canHei;
+            const canWid = 900;canvas.width = canWid;
+            const canHei = 600;canvas.height = canHei;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
         }
@@ -146,9 +147,9 @@ function () {
             ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
             ctx.textAlign = "left";
-            ctx.fillText("SCORE", 650, 120);
+            ctx.fillText("SCORE", 650, 100);
             ctx.textAlign = "right";
-            ctx.fillText(this.status.score, 650, 150);
+            ctx.fillText(this.status.score, 700, 150);
             //this.ctx.fillText(score, 600, 150);
         }
         //ブロックを生成する関数(引数x,y,spe戻り値block)
@@ -156,23 +157,28 @@ function () {
             //生成場所が空いていたら
             if(this.field[y][x] === 0){
                 console.log("blockをx=" + x + "y=" + y + "に生成しました。");
+                if(Math.random() >= 0.9){
+                    spe += Math.floor( Math.random() * 7 )*10;
+                }
                 const block = new Block(x,y,spe);
                 console.log(block);
                 return block;
+            }else if(!this.gameover){
+                //生成場所が埋まっていたら（生成不可能）ゲームオーバー
+                console.log("gameover");
+                //clearInterval(timerId);
+                //removeEventListener("keydown",keyInput,false);
+                //location.reload();
+                this.gameover = true;
+                this.finish();
             }
-            //生成場所が埋まっていたら（生成不可能）ゲームオーバー
-            console.log("gameover");
-            //clearInterval(timerId);
-            //removeEventListener("keydown",keyInput,false);
-            location.reload();
-            throw "GAMEOVER";
         }
         //ブロック達を生成する関数(引数blocknum戻り値blokcs)
         blocksGenerate() {
             this.currentBlock = true;
             this.blocks = new Array();
             var ran = Math.floor( Math.random() * 6 )+1;
-            console.log(ran);
+            console.log("case:"+ran);
             switch(ran){
                 case 1:
                     this.blocks[0] = this.blockGenerate(2+4,1,ran);
@@ -225,7 +231,6 @@ function () {
                     console.log("ブロックが引っ掛かりました。");
                     moveBool = false;
                 }
-                console.log("rakka");
             }
             //落下できない場合(地面についた)の処理
             if(!moveBool){
@@ -388,19 +393,36 @@ function () {
             this.field[y][x] -= Math.floor(this.field[y][x]/10);
             switch(markSpe){
                 case 1:
-                    this.blockRemove(x,y-1);
-                    this.blockRemove(x,y+1);
-                    this.blockRemove(x-1,y);
-                    this.blockRemove(x+1,y);
-                    this.adm.play(2);
-                    break;
+                    this.status.addScore(100);
                 case 2:
                     this.status.addScore(100);
+                case 3:
+                    this.status.addScore(100);
+                case 4:
+                    this.status.addScore(100);
+                case 5:
+                    this.status.addScore(100);
                     this.adm.play(4);
+                    break;
                 default:
                     break;
             }
             this.field[y][x] = 0;
+        }
+        //ゲームを終了する
+        finish(){
+            var ctx = this.ctx;
+            ctx.fillStyle = "white";
+            ctx.fillRect(100, 100, 750, 400);
+            ctx.fillStyle = "black";
+            ctx.strokeRect(100, 100, 750, 400);
+            //スコア
+            ctx.fillStyle = "black";
+            ctx.font = "32px serif";
+            ctx.textAlign = "left";
+            ctx.fillText("SCORE", 400, 150);
+            ctx.textAlign = "right";
+            ctx.fillText(this.status.score, 450, 200);
         }
     }
     //key
@@ -432,6 +454,7 @@ function () {
     //main
     const tetris = new Tetris();
     setInterval(mainRoop,1000);
+    // tetris.finish();
     addEventListener("keydown",keyInput, false);
     function mainRoop(){
         if(!tetris.currentBlock){
