@@ -14,6 +14,36 @@ function () {
             return Math.floor(this.spe/10);
         }
     }
+    //Statusクラス
+    class Status {
+        constructor() {
+            this.score = 0;
+        }
+        addScore(score){
+            this.score += score;
+        }
+    }
+    //AudioManagerクラス
+    class AudioManager {
+        constructor(){
+            var audioPass = [
+                "se/decision.mp3",
+                "se/rotation.mp3",
+                "se/blast.mp3",
+                "se/disappear.mp3",
+                "se/buff.mp3"
+            ];
+            this.audios = new Array();
+            for(var i = 0;i < audioPass.length;i++){
+                this.audios[i] = new Audio(audioPass[i]);
+            }
+        }
+        play(audioNumber){
+            this.audios[audioNumber].pause();
+            this.audios[audioNumber].currentTime = 0;
+            this.audios[audioNumber].play();
+        }
+    }
     //tetrisクラス
     class Tetris {
         //コンストラクタ
@@ -28,16 +58,17 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,1,1,1,1,1,1,1,1,1,0,-1],
+                [-1,0,0,0,0,0,1,1,1,0,0,-1],
+                [-1,0,1,1,1,1,1,1,1,0,0,-1],
+                [-1,1,21,1,1,1,1,1,11,0,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
             this.currentBlock = false;
             this.blockSize = 50;
+            this.status = new Status();
             //ブロックの画像配列
-            var imageUrls = [
+            var imagePass = [
                 "images/black.png",
                 "images/blue.png",
                 "images/lightblue.png",
@@ -47,26 +78,29 @@ function () {
                 "images/yellow.png",
                 "images/yellowgreen.png"
             ];
-            var markUrls = [
+            var markPass = [
                 "marks/Transparent.png",
                 "marks/bomb2.png",
+                "marks/star01.png",
             ];
             this.blockImages = new Array();
-            for(var i = 0;i < imageUrls.length; i++){
+            for(var i = 0;i < imagePass.length; i++){
                 this.blockImages[i] = new Image();
-                this.blockImages[i].src = imageUrls[i];
+                this.blockImages[i].src = imagePass[i];
             }
             this.marks = new Array();
-            for(var i = 0;i < markUrls.length; i++){
+            for(var i = 0;i < markPass.length; i++){
                 this.marks[i] = new Image();
-                this.marks[i].src = markUrls[i];
+                this.marks[i].src = markPass[i];
             }
+            //AudioManager
+            this.adm = new AudioManager();
             //canvasの設定
-            const canWid = 700;
-            const canHei = 600;
             var canvas = document.getElementById('canvas');
-            canvas.width = canWid;//canvasの横幅
-            canvas.height = canHei;//canvasの縦幅
+            const canWid = 900;
+            const canHei = 600;
+            canvas.width = canWid;
+            canvas.height = canHei;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
         }
@@ -77,7 +111,7 @@ function () {
             var ctx = this.ctx;
             //キャンバスを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, 700, 600);
+            ctx.fillRect(0, 0, 900, 600);
             //field[][]を元に描画
             for(var y = 0; y < this.field.length; y++){
                 for(var x = 0; x < this.field[y].length; x++){
@@ -97,7 +131,7 @@ function () {
                     }
                 }
             }
-            //現在ブロックを所持していたら実行
+            //現在ブロックを所持していたら
             if(this.currentBlock){
                 for(var i = 0; i < this.blocks.length; i++){
                     var block = this.blocks[i];
@@ -107,9 +141,14 @@ function () {
                     ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
+            //スコア
             ctx.fillStyle = "white";
-            ctx.fillRect(0, 0, 700, 50);
-            ctx.fillText("SCORE", 600, 120);
+            ctx.fillRect(0, 0, 900, 50);
+            ctx.font = "32px serif";
+            ctx.textAlign = "left";
+            ctx.fillText("SCORE", 650, 120);
+            ctx.textAlign = "right";
+            ctx.fillText(this.status.score, 650, 150);
             //this.ctx.fillText(score, 600, 150);
         }
         //ブロックを生成する関数(引数x,y,spe戻り値block)
@@ -125,7 +164,8 @@ function () {
             console.log("gameover");
             //clearInterval(timerId);
             //removeEventListener("keydown",keyInput,false);
-            alert("GAME OVER");
+            location.reload();
+            throw "GAMEOVER";
         }
         //ブロック達を生成する関数(引数blocknum戻り値blokcs)
         blocksGenerate() {
@@ -195,14 +235,15 @@ function () {
                 for(var i = 0;i < this.blocks.length;i++){
                     this.field[this.blocks[i].y][this.blocks[i].x] = this.blocks[i].spe;
                 }
-                this.blockRemove();
+                this.blocksRemove();
                 return;
             }
             //ブロックを落下
-            //次にblock達のy座標を１つずらす
+            //block達のy座標を１つずらす
             for(var i = 0;i < this.blocks.length;i++){
                 this.blocks[i].y++;
             }
+            this.fieldDraw();
         }
         //ブロックを移動させる関数
         blocksMove(direction){
@@ -250,6 +291,7 @@ function () {
                 this.blocks[i].x += checkX;
                 this.blocks[i].y += checkY;
             }
+            this.adm.play(1);
             this.fieldDraw();
         }
         //ブロックを回転する関数
@@ -307,10 +349,11 @@ function () {
                 this.blocks[i].x = x + checkX[i-1];
                 this.blocks[i].y = y + checkY[i-1];
             }
+            this.adm.play(1);
             this.fieldDraw();
         }
         //ブロックを削除する関数
-        blockRemove() {
+        blocksRemove() {
             //y=12は-1で埋めたフィールドなので処理は省く
             for(var y = 0; y < this.field.length-1; y++){
                 //消去可能か格納する変数
@@ -324,7 +367,8 @@ function () {
                 if(removeBool){
                     //該当のy行のブロックを消去、両端(x=0,x=11)は省く
                     for(var x = 1; x < this.field[y].length-1; x++){
-                        this.field[y][x] = 0;
+                        //this.field[y][x] = 0;
+                        this.blockRemove(x,y);
                         console.log("y=" + y + "の行を削除しました。");
                     }
                     //該当のy行より上の行をすべて下に落とす。
@@ -333,12 +377,32 @@ function () {
                         console.log("y=" + (yy-1) + "の行を落としました。");
                     }
                     this.field[0] = [-1,0,0,0,0,0,0,0,0,0,0,-1];
+                    this.status.addScore(100);
+                    this.adm.play(3);
                 }
             }
             this.fieldDraw();
         }
+        blockRemove(x,y){
+            var markSpe = Math.floor(this.field[y][x]/10);
+            this.field[y][x] -= Math.floor(this.field[y][x]/10);
+            switch(markSpe){
+                case 1:
+                    this.blockRemove(x,y-1);
+                    this.blockRemove(x,y+1);
+                    this.blockRemove(x-1,y);
+                    this.blockRemove(x+1,y);
+                    this.adm.play(2);
+                    break;
+                case 2:
+                    this.status.addScore(100);
+                    this.adm.play(4);
+                default:
+                    break;
+            }
+            this.field[y][x] = 0;
+        }
     }
-
     //key
     function keyInput(){
         event.preventDefault();
@@ -374,6 +438,5 @@ function () {
             tetris.blocksGenerate();
         }
         tetris.blocksDrop();
-        tetris.fieldDraw();
     }
 },false);
