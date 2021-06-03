@@ -32,7 +32,8 @@ function () {
                 "se/blast.mp3",
                 "se/disappear.mp3",
                 "se/buff.mp3",
-                "se/whistle.mp3"
+                "se/whistle.mp3",
+                "music/famipop2.mp3"
             ];
             this.audios = new Array();
             for(var i = 0;i < audioPass.length;i++){
@@ -42,6 +43,11 @@ function () {
         play(audioNumber){
             this.audios[audioNumber].pause();
             this.audios[audioNumber].currentTime = 0;
+            this.audios[audioNumber].play();
+        }
+        playLoop(audioNumber){
+            this.audios[audioNumber].loop = true;
+            this.audios[audioNumber].volume = 0.5;
             this.audios[audioNumber].play();
         }
     }
@@ -172,6 +178,7 @@ function () {
                 //removeEventListener("keydown",keyInput,false);
                 //location.reload();
                 this.gameover = true;
+                this.currentBlock = false;
                 clearInterval(timerID);
                 this.finish();
             }
@@ -184,40 +191,40 @@ function () {
             console.log("case:"+ran);
             switch(ran){
                 case 1:
-                    this.blocks[0] = this.blockGenerate(2+4,1,ran);
-                    this.blocks[1] = this.blockGenerate(3+4,1,ran);
-                    this.blocks[2] = this.blockGenerate(1+4,0,ran);
-                    this.blocks[3] = this.blockGenerate(2+4,0,ran);
+                    this.blocks[0] = this.blockGenerate(2+3,1,ran);
+                    this.blocks[1] = this.blockGenerate(3+3,1,ran);
+                    this.blocks[2] = this.blockGenerate(1+3,0,ran);
+                    this.blocks[3] = this.blockGenerate(2+3,0,ran);
                     break;
                 case 2:
-                    this.blocks[0] = this.blockGenerate(2+4,1,ran);
-                    this.blocks[1] = this.blockGenerate(2+4,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+4,0,ran);
-                    this.blocks[3] = this.blockGenerate(1+4,1,ran);
+                    this.blocks[0] = this.blockGenerate(2+3,1,ran);
+                    this.blocks[1] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
+                    this.blocks[3] = this.blockGenerate(1+3,1,ran);
                     break;
                 case 3:
-                    this.blocks[0] = this.blockGenerate(2+4,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+4,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+4,0,ran);
-                    this.blocks[3] = this.blockGenerate(3+4,1,ran);
+                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
+                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
+                    this.blocks[3] = this.blockGenerate(3+3,1,ran);
                     break;
                 case 4:
-                    this.blocks[0] = this.blockGenerate(2+4,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+4,0,ran);
-                    this.blocks[2] = this.blockGenerate(1+4,1,ran);
-                    this.blocks[3] = this.blockGenerate(3+4,0,ran);
+                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
+                    this.blocks[2] = this.blockGenerate(1+3,1,ran);
+                    this.blocks[3] = this.blockGenerate(3+3,0,ran);
                     break;
                 case 5:
-                    this.blocks[0] = this.blockGenerate(2+4,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+4,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+4,0,ran);
-                    this.blocks[3] = this.blockGenerate(2+4,1,ran);
+                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
+                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
+                    this.blocks[3] = this.blockGenerate(2+3,1,ran);
                     break;
                 case 6:
-                    this.blocks[0] = this.blockGenerate(2+4,1,ran);
-                    this.blocks[1] = this.blockGenerate(1+4,1,ran);
-                    this.blocks[2] = this.blockGenerate(3+4,1,ran);
-                    this.blocks[3] = this.blockGenerate(4+4,1,ran);
+                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
+                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
+                    this.blocks[3] = this.blockGenerate(4+3,0,ran);
                     break;
             }
         }
@@ -427,21 +434,20 @@ function () {
             ctx.fillText("SCORE", 400, 150);
             ctx.textAlign = "right";
             ctx.fillText(this.status.score, 450, 200);
+            // gameStarted = false;
         }
+        //メインループ
         mainRoop(){
             if(!this.currentBlock){
                 this.blocksGenerate();
+            }else if(!this.gameover){
+                this.blocksDrop();
             }
-            this.blocksDrop();
         }
     }
     //key
     function keyInput(){
         event.preventDefault();
-        if(!tetris.currentBlock){
-            console.log("動かせるブロックがありません。");
-            return;
-        }
         var key_code = event.keyCode;
         console.log(key_code + "が入力されました。");
         switch(key_code){
@@ -449,13 +455,27 @@ function () {
             case 34:
             case 35:
             case 36:
+                if(!tetris.currentBlock){
+                    console.log("動かせるブロックがありません。");
+                    return;
+                }
                 tetris.blocksSpin(key_code);
                 break;
             case 37:
             case 38:
             case 39:
             case 40:
+                if(!tetris.currentBlock){
+                    console.log("動かせるブロックがありません。");
+                    return;
+                }
                 tetris.blocksMove(key_code);
+                break;
+            case 13:
+                if(!gameStarted){
+                    startGame();
+                    gameStarted = true;
+                }
                 break;
             default:
         }
@@ -463,15 +483,15 @@ function () {
 
     //main
     const tetris = new Tetris();
-    var timerID = setInterval(mainRoop,1000);
-    
-    // tetris.finish();
+    var timerID;
+    var gameStarted = false;
     addEventListener("keydown",keyInput, false);
+
     function mainRoop(){
-        // if(!tetris.currentBlock){
-        //     tetris.blocksGenerate();
-        // }
-        // tetris.blocksDrop();
         tetris.mainRoop();
+    }
+    function startGame(){
+        timerID = setInterval(mainRoop,1000);
+        tetris.adm.playLoop(6);
     }
 },false);

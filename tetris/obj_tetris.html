@@ -6,6 +6,20 @@
         <div>
             <canvas id="canvas"></canvas>
         </div>
+        <script>
+            window.onload = ()=>{
+              var canvas = document.getElementById("canvas");
+              console.log(canvas);
+              var ctx = canvas.getContext('2d');
+            
+              const chara = new Image();
+              chara.src="title.png";
+              chara.onload = ()=>{
+                ctx.drawImage(chara, 0, 0, 900, 600);
+                 
+              };
+            };
+            </script>
         <script src="js/obj_tetris.js"></script>
     </body>
 
