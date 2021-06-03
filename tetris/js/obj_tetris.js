@@ -31,7 +31,8 @@ function () {
                 "se/rotation.mp3",
                 "se/blast.mp3",
                 "se/disappear.mp3",
-                "se/buff.mp3"
+                "se/buff.mp3",
+                "se/whistle.mp3"
             ];
             this.audios = new Array();
             for(var i = 0;i < audioPass.length;i++){
@@ -60,7 +61,7 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,0,0,0,11,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
@@ -85,6 +86,7 @@ function () {
                 "marks/star03.png",
                 "marks/star02.png",
                 "marks/star01.png",
+                "marks/bomb2.png",
             ];
             this.blockImages = new Array();
             for(var i = 0;i < imagePass.length; i++){
@@ -170,6 +172,7 @@ function () {
                 //removeEventListener("keydown",keyInput,false);
                 //location.reload();
                 this.gameover = true;
+                clearInterval(timerID);
                 this.finish();
             }
         }
@@ -411,6 +414,7 @@ function () {
         }
         //ゲームを終了する
         finish(){
+            this.adm.play(5);
             var ctx = this.ctx;
             ctx.fillStyle = "white";
             ctx.fillRect(100, 100, 750, 400);
@@ -423,6 +427,12 @@ function () {
             ctx.fillText("SCORE", 400, 150);
             ctx.textAlign = "right";
             ctx.fillText(this.status.score, 450, 200);
+        }
+        mainRoop(){
+            if(!this.currentBlock){
+                this.blocksGenerate();
+            }
+            this.blocksDrop();
         }
     }
     //key
@@ -453,13 +463,15 @@ function () {
 
     //main
     const tetris = new Tetris();
-    setInterval(mainRoop,1000);
+    var timerID = setInterval(mainRoop,1000);
+    
     // tetris.finish();
     addEventListener("keydown",keyInput, false);
     function mainRoop(){
-        if(!tetris.currentBlock){
-            tetris.blocksGenerate();
-        }
-        tetris.blocksDrop();
+        // if(!tetris.currentBlock){
+        //     tetris.blocksGenerate();
+        // }
+        // tetris.blocksDrop();
+        tetris.mainRoop();
     }
 },false);
