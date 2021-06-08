@@ -18,9 +18,16 @@ function () {
     class Status {
         constructor() {
             this.score = 0;
+            this.isDark = 0;
         }
         addScore(score){
             this.score += score;
+        }
+        setIsDark(tmp){
+            this.isDark = tmp;
+        }
+        addIsDark(tmp){
+            this.isDark += tmp;
         }
     }
     //AudioManagerクラス
@@ -67,13 +74,14 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,61,61,61,61,61,61,61,61,61,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
             this.currentBlock = false;
             this.gameover = false;
             this.blockSize = 50;
+            this.dropSpeed = 1000; //ミリ秒
             this.status = new Status();
             var imagePass = [
                 "images/black.png",
@@ -92,7 +100,7 @@ function () {
                 "marks/star03.png",
                 "marks/star02.png",
                 "marks/star01.png",
-                "marks/bomb2.png",
+                "marks/blackout.png",
             ];
             this.blockImages = new Array();
             for(var i = 0;i < imagePass.length; i++){
@@ -115,11 +123,20 @@ function () {
         }    
         //マップを描画する関数
         fieldDraw() {
-            //可読性のために移動
             var ctx = this.ctx;
-            //キャンバスを初期化
+            //フィールドを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, 900, 600);
+            ctx.fillRect(50,0,500,600); //フィールド部分
+            //暗闇デバフの時
+            if(this.status.isDark > 0){
+                ctx.fillStyle = "white";
+                ctx.font = "32px serif";
+                ctx.textAlign = "center";
+                ctx.fillText("暗転中～～", 300, 300);
+                ctx.fillText("あと"+this.status.isDark+"回置くまで暗闇だよ～～", 300, 350);
+                return;
+            }
+            //ctx.fillRect(0, 0, 900, 600);   
             //field[][]を元に描画
             for(var y = 0; y < this.field.length; y++){
                 for(var x = 0; x < this.field[y].length; x++){
@@ -149,15 +166,21 @@ function () {
                     ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
-            //スコア
+        }
+        //スコア描写
+        scoreDraw() {
+            var ctx = this.ctx;
+            //初期化
+            ctx.fillStyle = "black";
+            ctx.fillRect(600,0,400,600);
+
             ctx.fillStyle = "white";
-            ctx.fillRect(0, 0, 900, 50);
+            //ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
             ctx.textAlign = "left";
             ctx.fillText("SCORE", 650, 100);
             ctx.textAlign = "right";
             ctx.fillText(this.status.score, 700, 150);
-            //this.ctx.fillText(score, 600, 150);
         }
         //ブロックを生成する関数(引数x,y,spe戻り値block)
         blockGenerate(x,y,spe) {
@@ -178,8 +201,7 @@ function () {
                 //location.reload();
                 this.gameover = true;
                 this.currentBlock = false;
-                clearInterval(timerID);
-                this.finish();
+                clearTimeout(timerID);
             }
         }
         //ブロック達を生成する関数(引数blocknum戻り値blokcs)
@@ -226,6 +248,7 @@ function () {
                     this.blocks[3] = this.blockGenerate(4+3,0,ran);
                     break;
             }
+            this.fieldDraw();
         }
         //ブロックを落下させる関数
         blocksDrop() {
@@ -249,6 +272,7 @@ function () {
                 for(var i = 0;i < this.blocks.length;i++){
                     this.field[this.blocks[i].y][this.blocks[i].x] = this.blocks[i].spe;
                 }
+                this.status.addIsDark(-1);
                 this.blocksRemove();
                 return;
             }
@@ -322,7 +346,7 @@ function () {
             switch(direction){
                 case 33:
                 case 34:
-                    console.log("右回転");
+                    //console.log("右回転");
                     for(var i = 1;i < this.blocks.length;i++){
                         checkX[i-1] = -(this.blocks[i].y - y);
                         checkY[i-1] = this.blocks[i].x - x;
@@ -331,7 +355,7 @@ function () {
                     break;
                 case 36:
                 case 35:
-                    console.log("左回転");
+                    //console.log("左回転");
                     for(var i = 1;i < this.blocks.length;i++){
                         checkX[i-1] = this.blocks[i].y - y;
                         checkY[i-1] = -(this.blocks[i].x - x);
@@ -339,7 +363,7 @@ function () {
                     }
                     break;
                 default:
-                    console.log("関係ないキーです");
+                    //console.log("関係ないキーです");
                     return;
             }
             //ブロックたちそれぞれが移動可能か確認する。
@@ -396,11 +420,13 @@ function () {
                 }
             }
             this.fieldDraw();
+            this.scoreDraw();
         }
         blockRemove(x,y){
             var markSpe = Math.floor(this.field[y][x]/10);
             this.field[y][x] -= Math.floor(this.field[y][x]/10);
             switch(markSpe){
+                //☆
                 case 1:
                     this.status.addScore(100);
                 case 2:
@@ -412,6 +438,13 @@ function () {
                 case 5:
                     this.status.addScore(100);
                     this.adm.play(4);
+                    break;
+                    //blackout
+                case 6:
+                    // this.dropSpeed -= 50;
+                    // console.log(this.dropSpeed);
+
+                    this.status.setIsDark(2);
                     break;
                 default:
                     break;
@@ -433,15 +466,15 @@ function () {
             ctx.fillText("SCORE", 400, 150);
             ctx.textAlign = "right";
             ctx.fillText(this.status.score, 450, 200);
-            // gameStarted = false;
         }
         //メインループ
         mainLoop(){
             if(!this.currentBlock){
                 this.blocksGenerate();
-            }else if(!this.gameover){
+            }else{
                 this.blocksDrop();
             }
+            if(this.gameover) this.finish();
         }
     }
     //key
@@ -486,11 +519,12 @@ function () {
     addEventListener("keydown",keyInput, false);
 
     function mainLoop(){
+        timerID = setTimeout(mainLoop,tetris.dropSpeed);
         tetris.mainLoop();
-        setTimeout(mainLoop,tetris.dropSpeed);
     }
     function startGame(){
         mainLoop();
+        tetris.scoreDraw();
         tetris.adm.playLoop(6);
     }
 },false);
