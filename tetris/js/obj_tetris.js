@@ -19,6 +19,7 @@ function () {
         constructor() {
             this.score = 0;
             this.isDark = 0;
+            this.dropCount = 0;
         }
         addScore(score){
             this.score += score;
@@ -28,6 +29,12 @@ function () {
         }
         addIsDark(tmp){
             this.isDark += tmp;
+        }
+        resetDropCount(){
+            this.dropCount = 0;
+        }
+        addDropCount(tmp){
+            this.dropCount += tmp;
         }
     }
     //AudioManagerクラス
@@ -74,7 +81,7 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,61,61,61,61,61,61,61,61,61,0,-1],
+                [-1,1,1,1,1,61,1,1,1,1,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
@@ -101,6 +108,7 @@ function () {
                 "marks/star02.png",
                 "marks/star01.png",
                 "marks/blackout.png",
+                "marks/speedUp.png"
             ];
             this.blockImages = new Array();
             for(var i = 0;i < imagePass.length; i++){
@@ -186,9 +194,9 @@ function () {
         blockGenerate(x,y,spe) {
             //生成場所が空いていたら
             if(this.field[y][x] === 0){
-                console.log("blockをx=" + x + "y=" + y + "に生成しました。");
+                //console.log("blockをx=" + x + "y=" + y + "に生成しました。");
                 if(Math.random() >= 0.9){
-                    spe += Math.floor( Math.random() * 7 )*10;
+                    spe += Math.floor( Math.random() * 8 )*10;
                 }
                 const block = new Block(x,y,spe);
                 console.log(block);
@@ -196,9 +204,6 @@ function () {
             }else if(!this.gameover){
                 //生成場所が埋まっていたら（生成不可能）ゲームオーバー
                 console.log("gameover");
-                //clearInterval(timerId);
-                //removeEventListener("keydown",keyInput,false);
-                //location.reload();
                 this.gameover = true;
                 this.currentBlock = false;
                 clearTimeout(timerID);
@@ -272,7 +277,8 @@ function () {
                 for(var i = 0;i < this.blocks.length;i++){
                     this.field[this.blocks[i].y][this.blocks[i].x] = this.blocks[i].spe;
                 }
-                this.status.addIsDark(-1);
+                //暗闇中ならカウントを減らす。
+                if(this.status.isDark > 0) this.status.addIsDark(-1);
                 this.blocksRemove();
                 return;
             }
@@ -390,7 +396,7 @@ function () {
             this.adm.play(1);
             this.fieldDraw();
         }
-        //ブロックを削除する関数
+        //ブロック列を削除する関数
         blocksRemove() {
             //y=12は-1で埋めたフィールドなので処理は省く
             for(var y = 0; y < this.field.length-1; y++){
@@ -422,6 +428,7 @@ function () {
             this.fieldDraw();
             this.scoreDraw();
         }
+        //個々のブロックを削除する関数
         blockRemove(x,y){
             var markSpe = Math.floor(this.field[y][x]/10);
             this.field[y][x] -= Math.floor(this.field[y][x]/10);
@@ -441,17 +448,28 @@ function () {
                     break;
                     //blackout
                 case 6:
-                    // this.dropSpeed -= 50;
-                    // console.log(this.dropSpeed);
-
-                    this.status.setIsDark(2);
+                    this.status.addIsDark(1);
+                    break;
+                case 7:
+                    //speedup
+                    this.dropSpeed -= 50;
                     break;
                 default:
                     break;
             }
             this.field[y][x] = 0;
         }
-        //ゲームを終了する
+        //ブロックをせり上げる関数
+        blockUp(step){
+            for(var y = 1;y < this.field.length-1;y++){
+                this.field[y-1] = this.field[y];
+            }
+            this.field[this.field.length-2] = [
+                -1,1,1,1,1,1,1,0,1,1,1,-1
+            ];
+            this.status.resetDropCount();
+        }
+        //ゲームを終了する関数
         finish(){
             this.adm.play(5);
             var ctx = this.ctx;
