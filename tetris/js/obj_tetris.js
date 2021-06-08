@@ -112,8 +112,7 @@ function () {
             const canHei = 600;canvas.height = canHei;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
-        }
-        
+        }    
         //マップを描画する関数
         fieldDraw() {
             //可読性のために移動
@@ -437,7 +436,7 @@ function () {
             // gameStarted = false;
         }
         //メインループ
-        mainRoop(){
+        mainLoop(){
             if(!this.currentBlock){
                 this.blocksGenerate();
             }else if(!this.gameover){
@@ -480,18 +479,18 @@ function () {
             default:
         }
     }
-
     //main
     const tetris = new Tetris();
     var timerID;
     var gameStarted = false;
     addEventListener("keydown",keyInput, false);
 
-    function mainRoop(){
-        tetris.mainRoop();
+    function mainLoop(){
+        tetris.mainLoop();
+        setTimeout(mainLoop,tetris.dropSpeed);
     }
     function startGame(){
-        timerID = setInterval(mainRoop,1000);
+        mainLoop();
         tetris.adm.playLoop(6);
     }
 },false);
