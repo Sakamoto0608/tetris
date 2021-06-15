@@ -183,6 +183,8 @@ function () {
                     ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,600,50);
         }
         //スコア描写
         scoreDraw() {
@@ -199,6 +201,16 @@ function () {
             ctx.textAlign = "right";
             ctx.fillText(this.status.score, 700, 150);
         }
+        //ゲームオーバーのチェック
+        checkGameover(){
+            for(var i = 1; i < this.field[0].length-1;i++){
+                if(this.field[0][i] !== 0){
+                    this.gameover = true;
+                    this.currentBlock = false;
+                    clearTimeout(timerID);
+                }
+            }
+        }
         //ブロックを生成する関数(引数x,y,spe戻り値block)
         blockGenerate(x,y,spe) {
             //生成場所が空いていたら
@@ -210,16 +222,12 @@ function () {
                 const block = new Block(x,y,spe);
                 console.log(block);
                 return block;
-            }else if(!this.gameover){
-                //生成場所が埋まっていたら（生成不可能）ゲームオーバー
-                console.log("gameover");
-                this.gameover = true;
-                this.currentBlock = false;
-                clearTimeout(timerID);
             }
         }
         //ブロック達を生成する関数(引数blocknum戻り値blokcs)
         blocksGenerate() {
+            this.checkGameover();
+            if(this.gameover) return;
             this.currentBlock = true;
             this.blocks = new Array();
             var ran = Math.floor( Math.random() * 6 )+1;
