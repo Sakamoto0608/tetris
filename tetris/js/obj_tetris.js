@@ -222,8 +222,10 @@ function () {
                 const block = new Block(x,y,spe);
                 console.log(block);
                 return block;
-            }else if(!this.gameover){
-                this.checkGameover();
+            }else{
+                this.gameover = true;
+                this.currentBlock = false;
+                clearTimeout(timerID);
             }
         }
         //ブロック達を生成する関数(引数blocknum戻り値blokcs)
