@@ -47,7 +47,9 @@ function () {
                 "se/disappear.mp3",
                 "se/buff.mp3",
                 "se/whistle.mp3",
-                "music/famipop2.mp3"
+                "music/famipop2.mp3",
+                "music/8bit29.mp3",
+                "music/combatmarch.mp3",
             ];
             this.audios = new Array();
             for(var i = 0;i < audioPass.length;i++){
@@ -68,7 +70,7 @@ function () {
     //tetrisクラス
     class Tetris {
         //コンストラクタ
-        constructor() {
+        constructor(mode) {
             this.field = [
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
@@ -81,7 +83,7 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
-                [-1,1,1,1,1,61,1,1,1,1,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
@@ -120,6 +122,9 @@ function () {
                 this.marks[i] = new Image();
                 this.marks[i].src = markPass[i];
             }
+            //finishImage
+            this.finishImage = new Image();
+            this.finishImage.src = "finish.png";
             //AudioManager
             this.adm = new AudioManager();
             //canvasの設定
@@ -128,13 +133,21 @@ function () {
             const canHei = 600;canvas.height = canHei;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
+            //mode
+            this.isUp = false;
+            switch(mode){
+                case 0:
+                    this.isUp = true;
+                    break;
+                default:
+            }
         }    
         //マップを描画する関数
         fieldDraw() {
             var ctx = this.ctx;
             //フィールドを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(50,0,500,600); //フィールド部分
+            ctx.fillRect(50,0,500,600);
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -280,6 +293,9 @@ function () {
                 //暗闇中ならカウントを減らす。
                 if(this.status.isDark > 0) this.status.addIsDark(-1);
                 this.blocksRemove();
+                if(this.isUp) this.status.addDropCount(1);
+                if(this.status.dropCount >= 5) this.blockUp();
+                this.fieldDraw();
                 return;
             }
             //ブロックを落下
@@ -460,7 +476,8 @@ function () {
             this.field[y][x] = 0;
         }
         //ブロックをせり上げる関数
-        blockUp(step){
+        blockUp(){
+            console.log("せりあがり");
             for(var y = 1;y < this.field.length-1;y++){
                 this.field[y-1] = this.field[y];
             }
@@ -474,16 +491,17 @@ function () {
             this.adm.play(5);
             var ctx = this.ctx;
             ctx.fillStyle = "white";
-            ctx.fillRect(100, 100, 750, 400);
+            ctx.fillRect(100, 100, 700, 400);
             ctx.fillStyle = "black";
             ctx.strokeRect(100, 100, 750, 400);
+            ctx.drawImage(this.finishImage, 100, 100,700,400);
             //スコア
             ctx.fillStyle = "black";
-            ctx.font = "32px serif";
+            ctx.font = "64px serif";
             ctx.textAlign = "left";
-            ctx.fillText("SCORE", 400, 150);
+            ctx.fillText("SCORE", 350, 150);
             ctx.textAlign = "right";
-            ctx.fillText(this.status.score, 450, 200);
+            ctx.fillText(this.status.score, 450, 250);
         }
         //メインループ
         mainLoop(){
@@ -531,7 +549,7 @@ function () {
         }
     }
     //main
-    const tetris = new Tetris();
+    const tetris = new Tetris(0);
     var timerID;
     var gameStarted = false;
     addEventListener("keydown",keyInput, false);
@@ -542,7 +560,8 @@ function () {
     }
     function startGame(){
         mainLoop();
+        tetris.fieldDraw();
         tetris.scoreDraw();
-        tetris.adm.playLoop(6);
+        tetris.adm.playLoop(8);
     }
 },false);
