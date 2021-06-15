@@ -40,7 +40,7 @@ function () {
     //AudioManagerクラス
     class AudioManager {
         constructor(){
-            var audioPass = [
+            this.audioPass = [
                 "se/decision.mp3",
                 "se/rotation.mp3",
                 "se/blast.mp3",
@@ -51,20 +51,16 @@ function () {
                 "music/8bit29.mp3",
                 "music/combatmarch.mp3",
             ];
-            this.audios = new Array();
-            for(var i = 0;i < audioPass.length;i++){
-                this.audios[i] = new Audio(audioPass[i]);
-            }
         }
         play(audioNumber){
-            this.audios[audioNumber].pause();
-            this.audios[audioNumber].currentTime = 0;
-            this.audios[audioNumber].play();
+            var audio = new Audio(this.audioPass[audioNumber]);
+            audio.play();
         }
         playLoop(audioNumber){
-            this.audios[audioNumber].loop = true;
-            this.audios[audioNumber].volume = 0.5;
-            this.audios[audioNumber].play();
+            var audio = new Audio(this.audioPass[audioNumber]);
+            audio.play();
+            audio.volume = 0.5;
+            audio.loop = true;
         }
     }
     //tetrisクラス
