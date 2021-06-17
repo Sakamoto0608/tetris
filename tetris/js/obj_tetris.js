@@ -96,7 +96,7 @@ function () {
                 "images/orange.png",
                 "images/purple.png",
                 "images/lightblue.png",
-                "images/yellowgreen.png"
+                "images/yellow.png"
             ];
             var markPass = [
                 "marks/Transparent.png",
@@ -237,8 +237,9 @@ function () {
             }
             this.currentBlock = true;
             this.blocks = new Array();
-            var ran = Math.floor( Math.random() * 6 )+1;
+            var ran = Math.floor( Math.random() * 7 )+1;
             console.log("case:"+ran);
+            this.blocks.isSpin = true;
             switch(ran){
                 case 1:
                     this.blocks[0] = this.blockGenerate(2+3,1,ran);
@@ -275,6 +276,13 @@ function () {
                     this.blocks[1] = this.blockGenerate(1+3,0,ran);
                     this.blocks[2] = this.blockGenerate(3+3,0,ran);
                     this.blocks[3] = this.blockGenerate(4+3,0,ran);
+                    break;
+                case 7:
+                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[1] = this.blockGenerate(2+3,1,ran);
+                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
+                    this.blocks[3] = this.blockGenerate(3+3,1,ran);
+                    this.blocks.isSpin = false;
                     break;
             }
             this.fieldDraw();
@@ -368,6 +376,7 @@ function () {
         }
         //ブロックを回転する関数
         blocksSpin(direction){
+            if(!this.blocks.isSpin) return;
             //回転可能かどうかを格納する変数
             var spinBool = true;
             //回転先を格納する配列
