@@ -56,8 +56,8 @@ function () {
             var audio = new Audio(this.audioPass[audioNumber]);
             audio.play();
         }
-        playLoop(audioNumber){
-            var audio = new Audio(this.audioPass[audioNumber]);
+        playLoop(){
+            var audio = new Audio(this.audioPass[Math.floor(Math.random()*3)+6]);
             audio.play();
             audio.volume = 0.5;
             audio.loop = true;
@@ -575,6 +575,6 @@ function () {
         mainLoop();
         tetris.fieldDraw();
         tetris.scoreDraw();
-        tetris.adm.playLoop(8);
+        tetris.adm.playLoop();
     }
 },false);
