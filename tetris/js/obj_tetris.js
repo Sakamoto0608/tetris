@@ -304,8 +304,9 @@ function () {
                 //暗闇中ならカウントを減らす。
                 if(this.status.isDark > 0) this.status.addIsDark(-1);
                 this.blocksRemove();
+                //ブロックせり上がり
                 if(this.isUp) this.status.addDropCount(1);
-                if(this.status.dropCount >= 5) this.blockUp();
+                
                 this.fieldDraw();
                 return;
             }
@@ -516,6 +517,7 @@ function () {
         }
         //メインループ
         mainLoop(){
+            if(this.status.dropCount >= 5) this.blockUp();
             if(!this.currentBlock){
                 this.blocksGenerate();
             }else{
