@@ -502,9 +502,10 @@ function () {
             for(var y = 1;y < this.field.length-1;y++){
                 this.field[y-1] = this.field[y];
             }
-            this.field[this.field.length-2] = [
-                -1,1,1,1,1,1,1,0,1,1,1,-1
-            ];
+            var ran = Math.floor(Math.random()*10)+1;
+            var lowerRow = [-1,1,1,1,1,1,1,1,1,1,1,-1];
+            lowerRow[ran] = 0;
+            this.field[this.field.length-2] = lowerRow;
             this.status.resetDropCount();
         }
         //ゲームを終了する関数
