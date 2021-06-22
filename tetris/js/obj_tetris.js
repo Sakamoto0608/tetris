@@ -80,6 +80,9 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
@@ -122,7 +125,7 @@ function () {
             //canvasの設定
             var canvas = document.getElementById('canvas');
             const canWid = 900;canvas.width = canWid;
-            const canHei = 600;canvas.height = canHei;
+            const canHei = (this.field.length-1)*50;canvas.height = canHei;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
             //mode
@@ -139,7 +142,7 @@ function () {
             var ctx = this.ctx;
             //フィールドを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(50,0,500,600);
+            ctx.fillRect(50,0,500,750);
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -179,16 +182,16 @@ function () {
                     ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
-            ctx.fillStyle = "white";
-            ctx.fillRect(0,0,600,50);
+            //天井白くする
+            //ctx.fillStyle = "white";
+            //ctx.fillRect(0,0,600,50);
         }
         //スコア描写
         scoreDraw() {
             var ctx = this.ctx;
             //初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(600,0,400,600);
-
+            ctx.fillRect(600,0,400,750);
             ctx.fillStyle = "white";
             //ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
@@ -530,7 +533,7 @@ function () {
     }
     //key
     function keyInput(){
-        event.preventDefault();
+        //event.preventDefault();
         var key_code = event.keyCode;
         console.log(key_code + "が入力されました。");
         switch(key_code){
@@ -538,6 +541,7 @@ function () {
             case 34:
             case 35:
             case 36:
+                event.preventDefault();
                 if(!tetris.currentBlock){
                     console.log("動かせるブロックがありません。");
                     return;
@@ -548,6 +552,7 @@ function () {
             case 38:
             case 39:
             case 40:
+                event.preventDefault();
                 if(!tetris.currentBlock){
                     console.log("動かせるブロックがありません。");
                     return;
@@ -555,6 +560,7 @@ function () {
                 tetris.blocksMove(key_code);
                 break;
             case 13:
+                event.preventDefault();
                 if(!gameStarted){
                     startGame();
                     gameStarted = true;
