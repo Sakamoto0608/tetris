@@ -100,13 +100,9 @@ function () {
             ];
             var markPass = [
                 "marks/Transparent.png",
-                "marks/star05.png",
-                "marks/star04.png",
-                "marks/star03.png",
-                "marks/star02.png",
-                "marks/star01.png",
+                "marks/up.png",
                 "marks/blackout.png",
-                "marks/speedUp.png"
+                "marks/clock.png"
             ];
             this.blockImages = new Array();
             for(var i = 0;i < imagePass.length; i++){
@@ -217,7 +213,7 @@ function () {
             if(this.field[y][x] === 0){
                 //console.log("blockをx=" + x + "y=" + y + "に生成しました。");
                 if(Math.random() >= 0.9){
-                    spe += Math.floor( Math.random() * 8 )*10;
+                    spe += Math.floor( Math.random() * 4 )*10;
                 }
                 const block = new Block(x,y,spe);
                 console.log(block);
@@ -435,6 +431,8 @@ function () {
         }
         //ブロック列を削除する関数
         blocksRemove() {
+            var upScore = 1000;
+            var rate = 1;
             //y=12は-1で埋めたフィールドなので処理は省く
             for(var y = 0; y < this.field.length-1; y++){
                 //消去可能か格納する変数
@@ -458,10 +456,12 @@ function () {
                         console.log("y=" + (yy-1) + "の行を落としました。");
                     }
                     this.field[0] = [-1,0,0,0,0,0,0,0,0,0,0,-1];
-                    this.status.addScore(100);
                     this.adm.play(3);
+                    upScore = upScore * rate;
+                    rate += 0.5;
                 }
             }
+            if(rate > 1.0) this.status.addScore(upScore);
             this.fieldDraw();
             this.scoreDraw();
         }
@@ -470,26 +470,18 @@ function () {
             var markSpe = Math.floor(this.field[y][x]/10);
             this.field[y][x] -= Math.floor(this.field[y][x]/10);
             switch(markSpe){
-                //☆
+                //scoreup
                 case 1:
-                    this.status.addScore(100);
-                case 2:
-                    this.status.addScore(100);
-                case 3:
-                    this.status.addScore(100);
-                case 4:
-                    this.status.addScore(100);
-                case 5:
-                    this.status.addScore(100);
+                    this.status.addScore(500);
                     this.adm.play(4);
                     break;
-                    //blackout
+                //blackout
                 case 6:
                     this.status.addIsDark(1);
                     break;
+                //speedup
                 case 7:
-                    //speedup
-                    this.dropSpeed -= 50;
+                    if(this.dropSpeed > 100) this.dropSpeed -= 100;
                     break;
                 default:
                     break;
