@@ -142,7 +142,7 @@ function () {
             var ctx = this.ctx;
             //フィールドを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(50,0,500,750);
+            ctx.fillRect(50,50,500,700);
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -183,15 +183,15 @@ function () {
                 }
             }
             //天井白くする
-            //ctx.fillStyle = "white";
-            //ctx.fillRect(0,0,600,50);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,600,50);
         }
         //スコア描写
         scoreDraw() {
             var ctx = this.ctx;
             //初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(600,0,400,750);
+            ctx.fillRect(600,50,400,700);
             ctx.fillStyle = "white";
             //ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
@@ -216,8 +216,8 @@ function () {
             if(this.field[y][x] === 0){
                 //console.log("blockをx=" + x + "y=" + y + "に生成しました。");
                 if(Math.random() >= 0.9){
-                    spe += Math.floor( Math.random() * 4 )*10;
-                }
+                    spe += Math.floor( Math.random() * 2 + 2)*10;
+                }else if(Math.random() >= 0.7) spe += 10;
                 const block = new Block(x,y,spe);
                 console.log(block);
                 return block;
@@ -511,7 +511,7 @@ function () {
             ctx.fillRect(100, 100, 700, 400);
             ctx.fillStyle = "black";
             ctx.strokeRect(100, 100, 750, 400);
-            ctx.drawImage(this.finishImage, 100, 100,700,400);
+            ctx.drawImage(this.finishImage,100,100,700,500);
             //スコア
             ctx.fillStyle = "black";
             ctx.font = "64px serif";
