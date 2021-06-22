@@ -479,11 +479,11 @@ function () {
                     this.adm.play(4);
                     break;
                 //blackout
-                case 6:
+                case 2:
                     this.status.addIsDark(1);
                     break;
                 //speedup
-                case 7:
+                case 3:
                     if(this.dropSpeed > 100) this.dropSpeed -= 100;
                     break;
                 default:
