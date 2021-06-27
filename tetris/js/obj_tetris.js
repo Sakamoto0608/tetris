@@ -124,7 +124,7 @@ function () {
             this.adm = new AudioManager();
             //canvasの設定
             var canvas = document.getElementById('canvas');
-            const canWid = 900;canvas.width = canWid;
+            const canWid = 1200;canvas.width = canWid;
             const canHei = (this.field.length-1)*50;canvas.height = canHei;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
@@ -515,10 +515,8 @@ function () {
             //スコア
             ctx.fillStyle = "black";
             ctx.font = "64px serif";
-            ctx.textAlign = "left";
-            ctx.fillText("SCORE", 350, 150);
             ctx.textAlign = "right";
-            ctx.fillText(this.status.score, 450, 250);
+            ctx.fillText(this.status.score, 450, 300);
         }
         //メインループ
         mainLoop(){
@@ -566,10 +564,32 @@ function () {
                     gameStarted = true;
                 }
                 break;
+            case 72:
+                event.preventDefault();
+                if(!gameStarted){
+                    const help = new Image();
+                    help.src = helps[helpPage];
+                    help.onload = ()=>{ctx.drawImage(help,0,0,1080,720);};
+                    helpPage++;
+                    if(helpPage >= helps.length) helpPage = 0;
+                }
+                break;
             default:
         }
     }
-    //main
+    //エントリポイント
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    var helpPage = 1;
+    var helps = [
+        "title.png",
+        "help.png",
+        "help2.png"
+    ];
+    const title = new Image();
+    title.src="title.png";
+    title.onload = ()=>{ctx.drawImage(title, 0, 0, 1080, 720);};
+    //テトリス本体
     const tetris = new Tetris(0);
     var timerID;
     var gameStarted = false;
@@ -580,6 +600,8 @@ function () {
         tetris.mainLoop();
     }
     function startGame(){
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0,1200,1200);
         mainLoop();
         tetris.fieldDraw();
         tetris.scoreDraw();
