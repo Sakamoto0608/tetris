@@ -317,7 +317,7 @@ function () {
                 if(this.isUp) this.status.addDropCount(1);
                 
                 this.fieldDraw();
-                return;
+                return moveBool;
             }
             //ブロックを落下
             //block達のy座標を１つずらす
@@ -325,6 +325,7 @@ function () {
                 this.blocks[i].y++;
             }
             this.fieldDraw();
+            return moveBool;
         }
         //ブロックを移動させる関数
         blocksMove(direction){
@@ -551,7 +552,6 @@ function () {
                 tetris.blocksSpin(key_code);
                 break;
             case 37:
-            case 38:
             case 39:
             case 40:
                 event.preventDefault();
@@ -561,6 +561,11 @@ function () {
                 }
                 tetris.blocksMove(key_code);
                 break;
+            case 38:
+                event.preventDefault();
+                while(true){
+                    if(!tetris.blocksDrop()) return;
+                }
             case 13:
                 event.preventDefault();
                 if(!gameStarted){
