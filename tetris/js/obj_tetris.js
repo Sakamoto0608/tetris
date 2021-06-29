@@ -215,7 +215,7 @@ function () {
             //生成場所が空いていたら
             if(this.field[y][x] === 0){
                 //console.log("blockをx=" + x + "y=" + y + "に生成しました。");
-                if(Math.random() >= 0.9){
+                if(Math.random() >= 0.95){
                     spe += Math.floor( Math.random() * 2 + 2)*10;
                 }else if(Math.random() >= 0.7) spe += 10;
                 const block = new Block(x,y,spe);
@@ -520,7 +520,7 @@ function () {
         }
         //メインループ
         mainLoop(){
-            if(this.status.dropCount >= 5) this.blockUp();
+            if(this.status.dropCount >= 7) this.blockUp();
             if(!this.currentBlock){
                 this.blocksGenerate();
             }else{
