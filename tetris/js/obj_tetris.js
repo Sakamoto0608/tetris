@@ -519,7 +519,7 @@ function () {
             //スコア
             ctx.fillStyle = "black";
             ctx.font = "64px serif";
-            ctx.textAlign = "right";
+            ctx.textAlign = "center";
             ctx.fillText(this.status.score, 450, 300);
         }
         //メインループ
