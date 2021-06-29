@@ -145,9 +145,6 @@ function () {
             //フィールドを初期化
             ctx.fillStyle = "black";
             ctx.fillRect(50,50,500,700);
-            //天井白くする
-            ctx.fillStyle = "white";
-            ctx.fillRect(0,0,600,50);
             //現在ブロックを所持していたら
             if(this.currentBlock){
                 for(var i = 0; i < this.blocks.length; i++){
@@ -158,6 +155,9 @@ function () {
                     ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
+            //天井白くする
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,600,50);
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -169,7 +169,7 @@ function () {
             }
             //ctx.fillRect(0, 0, 900, 600);   
             //field[][]を元に描画
-            for(var y = 0; y < this.field.length; y++){
+            for(var y = 1; y < this.field.length; y++){
                 for(var x = 0; x < this.field[y].length; x++){
                     switch(this.field[y][x]){
                         case 0:
