@@ -91,6 +91,7 @@ function () {
             this.blockSize = 50;
             this.dropSpeed = 1000; //ミリ秒
             this.status = new Status();
+            this.upPosition = 4;
             var imagePass = [
                 "images/black.png",
                 "images/red.png",
@@ -99,7 +100,8 @@ function () {
                 "images/orange.png",
                 "images/purple.png",
                 "images/lightblue.png",
-                "images/yellow.png"
+                "images/yellow.png",
+                "images/gray.png"
             ];
             var markPass = [
                 "marks/Transparent.png",
@@ -497,8 +499,10 @@ function () {
             for(var y = 1;y < this.field.length-1;y++){
                 this.field[y-1] = this.field[y];
             }
-            var ran = Math.floor(Math.random()*10)+1;
-            var lowerRow = [-1,1,1,1,1,1,1,1,1,1,1,-1];
+            var ran = this.upPosition;
+            if(Math.random() < 0.7) ran = Math.floor(Math.random()*10)+1;
+            this.upPosition = ran;
+            var lowerRow = [-1,8,8,8,8,8,8,8,8,8,8,-1];
             lowerRow[ran] = 0;
             this.field[this.field.length-2] = lowerRow;
             this.status.resetDropCount();
