@@ -145,6 +145,19 @@ function () {
             //フィールドを初期化
             ctx.fillStyle = "black";
             ctx.fillRect(50,50,500,700);
+            //天井白くする
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,600,50);
+            //現在ブロックを所持していたら
+            if(this.currentBlock){
+                for(var i = 0; i < this.blocks.length; i++){
+                    var block = this.blocks[i];
+                    var x = block.x;
+                    var y = block.y;
+                    ctx.drawImage( this.blockImages[block.imageNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                    ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
+                }
+            }
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -174,19 +187,6 @@ function () {
                     }
                 }
             }
-            //現在ブロックを所持していたら
-            if(this.currentBlock){
-                for(var i = 0; i < this.blocks.length; i++){
-                    var block = this.blocks[i];
-                    var x = block.x;
-                    var y = block.y;
-                    ctx.drawImage( this.blockImages[block.imageNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
-                    ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
-                }
-            }
-            //天井白くする
-            ctx.fillStyle = "white";
-            ctx.fillRect(0,0,600,50);
         }
         //スコア描写
         scoreDraw() {
