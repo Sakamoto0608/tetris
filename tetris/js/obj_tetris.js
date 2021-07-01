@@ -66,7 +66,7 @@ function () {
     //tetrisクラス
     class Tetris {
         //コンストラクタ
-        constructor(mode) {
+        constructor() {
             this.field = [
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
@@ -86,10 +86,10 @@ function () {
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
-            this.currentBlock = false;
+            this.hasBlock = false;
             this.gameover = false;
             this.blockSize = 50;
-            this.dropSpeed = 1000; //ミリ秒
+            this.dropSpeed = 1000;
             this.status = new Status();
             this.upPosition = 4;
             var imagePass = [
@@ -103,17 +103,17 @@ function () {
                 "images/yellow.png",
                 "images/gray.png"
             ];
+            this.blockImages = new Array();
+            for(var i = 0;i < imagePass.length; i++){
+                this.blockImages[i] = new Image();
+                this.blockImages[i].src = imagePass[i];
+            }
             var markPass = [
                 "marks/Transparent.png",
                 "marks/up.png",
                 "marks/blackout.png",
                 "marks/clock.png"
             ];
-            this.blockImages = new Array();
-            for(var i = 0;i < imagePass.length; i++){
-                this.blockImages[i] = new Image();
-                this.blockImages[i].src = imagePass[i];
-            }
             this.marks = new Array();
             for(var i = 0;i < markPass.length; i++){
                 this.marks[i] = new Image();
@@ -126,18 +126,12 @@ function () {
             this.adm = new AudioManager();
             //canvasの設定
             var canvas = document.getElementById('canvas');
-            const canWid = 1200;canvas.width = canWid;
-            const canHei = (this.field.length-1)*50;canvas.height = canHei;
+            canvas.width = 1200;
+            canvas.height = (this.field.length-1)*50;
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
             //mode
-            this.isUp = false;
-            switch(mode){
-                case 0:
-                    this.isUp = true;
-                    break;
-                default:
-            }
+            this.isUp = true;
         }    
         //マップを描画する関数
         fieldDraw() {
@@ -146,7 +140,7 @@ function () {
             ctx.fillStyle = "black";
             ctx.fillRect(50,50,500,700);
             //現在ブロックを所持していたら
-            if(this.currentBlock){
+            if(this.hasBlock){
                 for(var i = 0; i < this.blocks.length; i++){
                     var block = this.blocks[i];
                     var x = block.x;
@@ -207,7 +201,7 @@ function () {
             for(var i = 1; i < this.field[0].length-1;i++){
                 if(this.field[0][i] !== 0){
                     this.gameover = true;
-                    this.currentBlock = false;
+                    this.hasBlock = false;
                     clearTimeout(timerID);
                 }
             }
@@ -225,7 +219,7 @@ function () {
                 return block;
             }else{
                 this.gameover = true;
-                this.currentBlock = false;
+                this.hasBlock = false;
                 clearTimeout(timerID);
             }
         }
@@ -236,53 +230,53 @@ function () {
                 console.log("gameover");
                 return;
             }
-            this.currentBlock = true;
+            this.hasBlock = true;
             this.blocks = new Array();
             var ran = Math.floor( Math.random() * 7 )+1;
             console.log("case:"+ran);
             this.blocks.isSpin = true;
             switch(ran){
                 case 1:
-                    this.blocks[0] = this.blockGenerate(2+3,1,ran);
-                    this.blocks[1] = this.blockGenerate(3+3,1,ran);
-                    this.blocks[2] = this.blockGenerate(1+3,0,ran);
-                    this.blocks[3] = this.blockGenerate(2+3,0,ran);
+                    this.blocks[0] = this.blockGenerate(5,1,ran);
+                    this.blocks[1] = this.blockGenerate(6,1,ran);
+                    this.blocks[2] = this.blockGenerate(4,0,ran);
+                    this.blocks[3] = this.blockGenerate(5,0,ran);
                     break;
                 case 2:
-                    this.blocks[0] = this.blockGenerate(2+3,1,ran);
-                    this.blocks[1] = this.blockGenerate(2+3,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
-                    this.blocks[3] = this.blockGenerate(1+3,1,ran);
+                    this.blocks[0] = this.blockGenerate(5,1,ran);
+                    this.blocks[1] = this.blockGenerate(5,0,ran);
+                    this.blocks[2] = this.blockGenerate(6,0,ran);
+                    this.blocks[3] = this.blockGenerate(4,1,ran);
                     break;
                 case 3:
-                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
-                    this.blocks[3] = this.blockGenerate(3+3,1,ran);
+                    this.blocks[0] = this.blockGenerate(5,0,ran);
+                    this.blocks[1] = this.blockGenerate(4,0,ran);
+                    this.blocks[2] = this.blockGenerate(6,0,ran);
+                    this.blocks[3] = this.blockGenerate(6,1,ran);
                     break;
                 case 4:
-                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
-                    this.blocks[2] = this.blockGenerate(1+3,1,ran);
-                    this.blocks[3] = this.blockGenerate(3+3,0,ran);
+                    this.blocks[0] = this.blockGenerate(5,0,ran);
+                    this.blocks[1] = this.blockGenerate(4,0,ran);
+                    this.blocks[2] = this.blockGenerate(4,1,ran);
+                    this.blocks[3] = this.blockGenerate(6,0,ran);
                     break;
                 case 5:
-                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
-                    this.blocks[3] = this.blockGenerate(2+3,1,ran);
+                    this.blocks[0] = this.blockGenerate(5,0,ran);
+                    this.blocks[1] = this.blockGenerate(4,0,ran);
+                    this.blocks[2] = this.blockGenerate(6,0,ran);
+                    this.blocks[3] = this.blockGenerate(5,1,ran);
                     break;
                 case 6:
-                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
-                    this.blocks[1] = this.blockGenerate(1+3,0,ran);
-                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
-                    this.blocks[3] = this.blockGenerate(4+3,0,ran);
+                    this.blocks[0] = this.blockGenerate(5,0,ran);
+                    this.blocks[1] = this.blockGenerate(4,0,ran);
+                    this.blocks[2] = this.blockGenerate(6,0,ran);
+                    this.blocks[3] = this.blockGenerate(7,0,ran);
                     break;
                 case 7:
-                    this.blocks[0] = this.blockGenerate(2+3,0,ran);
-                    this.blocks[1] = this.blockGenerate(2+3,1,ran);
-                    this.blocks[2] = this.blockGenerate(3+3,0,ran);
-                    this.blocks[3] = this.blockGenerate(3+3,1,ran);
+                    this.blocks[0] = this.blockGenerate(5,0,ran);
+                    this.blocks[1] = this.blockGenerate(5,1,ran);
+                    this.blocks[2] = this.blockGenerate(6,0,ran);
+                    this.blocks[3] = this.blockGenerate(6,1,ran);
                     this.blocks.isSpin = false;
                     break;
             }
@@ -291,7 +285,7 @@ function () {
         //ブロックを落下させる関数
         blocksDrop() {
             //落下可能かどうかを格納する変数
-            var moveBool = true;
+            var isDrop = true;
             //ブロックたちそれぞれが落下可能か確認する。
             for(var i = 0;i < this.blocks.length;i++){
                 var block = this.blocks[i];
@@ -299,13 +293,13 @@ function () {
                 var y = block.y;
                 if(!(this.field[y+1][x] === 0)){
                     console.log("ブロックが引っ掛かりました。");
-                    moveBool = false;
+                    isDrop = false;
                 }
             }
             //落下できない場合(地面についた)の処理
-            if(!moveBool){
+            if(!isDrop){
                 //ブロック未所持状態へ
-                this.currentBlock = false;
+                this.hasBlock = false;
                 //blocksの座標を取得して、fieldの対象の部分にspeを代入
                 for(var i = 0;i < this.blocks.length;i++){
                     this.field[this.blocks[i].y][this.blocks[i].x] = this.blocks[i].spe;
@@ -317,7 +311,7 @@ function () {
                 if(this.isUp) this.status.addDropCount(1);
                 
                 this.fieldDraw();
-                return moveBool;
+                return isDrop;
             }
             //ブロックを落下
             //block達のy座標を１つずらす
@@ -325,12 +319,12 @@ function () {
                 this.blocks[i].y++;
             }
             this.fieldDraw();
-            return moveBool;
+            return isDrop;
         }
         //ブロックを移動させる関数
         blocksMove(direction){
             //移動可能かどうかを格納する変数
-            var moveBool = true;
+            var isMove = true;
             //参照先(x-1 or x+1 or y+1)を格納する変数
             var checkX = 0;
             var checkY = 0;
@@ -359,11 +353,11 @@ function () {
                 var x = block.x;
                 var y = block.y;
                 if(!(this.field[y+checkY][x+checkX] === 0)){
-                    moveBool = false;
+                    isMove = false;
                 }
             }
             //移動できない場合の処理
-            if(!moveBool){
+            if(!isMove){
                 console.log("そちらへは行けません。");
                 return;
             }
@@ -442,14 +436,14 @@ function () {
             //y=12は-1で埋めたフィールドなので処理は省く
             for(var y = 0; y < this.field.length-1; y++){
                 //消去可能か格納する変数
-                var removeBool = true;
+                var isRemove = true;
                 for(var x = 0; x < this.field[y].length; x++){
                     //0(空き)がある行は消えないのでfalseを代入
                     if(this.field[y][x] === 0){
-                        removeBool = false;
+                        isRemove = false;
                     }
                 }
-                if(removeBool){
+                if(isRemove){
                     //該当のy行のブロックを消去、両端(x=0,x=11)は省く
                     for(var x = 1; x < this.field[y].length-1; x++){
                         //this.field[y][x] = 0;
@@ -526,7 +520,7 @@ function () {
         //メインループ
         mainLoop(){
             if(this.status.dropCount >= 7) this.blockUp();
-            if(!this.currentBlock){
+            if(!this.hasBlock){
                 this.blocksGenerate();
             }else{
                 this.blocksDrop();
@@ -545,7 +539,7 @@ function () {
             case 35:
             case 36:
                 event.preventDefault();
-                if(!tetris.currentBlock){
+                if(!tetris.hasBlock){
                     console.log("動かせるブロックがありません。");
                     return;
                 }
@@ -555,7 +549,7 @@ function () {
             case 39:
             case 40:
                 event.preventDefault();
-                if(!tetris.currentBlock){
+                if(!tetris.hasBlock){
                     console.log("動かせるブロックがありません。");
                     return;
                 }
@@ -563,6 +557,10 @@ function () {
                 break;
             case 38:
                 event.preventDefault();
+                if(!tetris.hasBlock){
+                    console.log("動かせるブロックがありません。");
+                    return;
+                }
                 while(true){
                     if(!tetris.blocksDrop()) return;
                 }
@@ -599,7 +597,7 @@ function () {
     title.src="title.png";
     title.onload = ()=>{ctx.drawImage(title, 0, 0, 1080, 720);};
     //テトリス本体
-    const tetris = new Tetris(0);
+    const tetris = new Tetris();
     var timerID;
     var gameStarted = false;
     addEventListener("keydown",keyInput, false);
