@@ -501,6 +501,7 @@ function () {
             lowerRow[ran] = 0;
             this.field[this.field.length-2] = lowerRow;
             this.status.resetDropCount();
+            this.fieldDraw();
         }
         //ゲームを終了する関数
         finish(){
