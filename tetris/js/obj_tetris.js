@@ -83,6 +83,8 @@ function () {
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
             ];
             this.blocks = null;
@@ -138,7 +140,7 @@ function () {
             var ctx = this.ctx;
             //フィールドを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(50,50,500,700);
+            ctx.fillRect(50,50,500,800);
             //現在ブロックを所持していたら
             if(this.hasBlock){
                 for(var i = 0; i < this.blocks.length; i++){
@@ -151,7 +153,7 @@ function () {
             }
             //天井白くする
             ctx.fillStyle = "white";
-            ctx.fillRect(0,0,600,50);
+            ctx.fillRect(0,0,600,100);
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -163,7 +165,7 @@ function () {
             }
             //ctx.fillRect(0, 0, 900, 600);   
             //field[][]を元に描画
-            for(var y = 1; y < this.field.length; y++){
+            for(var y = 2; y < this.field.length; y++){
                 for(var x = 0; x < this.field[y].length; x++){
                     switch(this.field[y][x]){
                         case 0:
@@ -187,22 +189,24 @@ function () {
             var ctx = this.ctx;
             //初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(600,50,400,700);
+            ctx.fillRect(600,100,400,750);
             ctx.fillStyle = "white";
             //ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
             ctx.textAlign = "left";
-            ctx.fillText("SCORE", 650, 100);
+            ctx.fillText("SCORE", 650, 200);
             ctx.textAlign = "right";
-            ctx.fillText(this.status.score, 700, 150);
+            ctx.fillText(this.status.score, 700, 250);
         }
         //ゲームオーバーのチェック
         checkGameover(){
-            for(var i = 1; i < this.field[0].length-1;i++){
-                if(this.field[0][i] !== 0){
-                    this.gameover = true;
-                    this.hasBlock = false;
-                    clearTimeout(timerID);
+            for(var y = 0; y < 2; y++){
+                for(var x = 1; x < this.field[0].length-1;x++){
+                    if(this.field[y][x] !== 0){
+                        this.gameover = true;
+                        this.hasBlock = false;
+                        clearTimeout(timerID);
+                    }
                 }
             }
         }
@@ -217,10 +221,6 @@ function () {
                 const block = new Block(x,y,spe);
                 console.log(block);
                 return block;
-            }else{
-                this.gameover = true;
-                this.hasBlock = false;
-                clearTimeout(timerID);
             }
         }
         //ブロック達を生成する関数(引数blocknum戻り値blokcs)
@@ -569,6 +569,10 @@ function () {
                 if(!gameStarted){
                     startGame();
                     gameStarted = true;
+                    scrollTo({
+                        top: 100,
+                        behavior: 'smooth'
+                      });
                 }
                 break;
             case 72:
