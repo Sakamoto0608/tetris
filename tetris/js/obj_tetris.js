@@ -151,9 +151,6 @@ function () {
                     ctx.drawImage( this.marks[block.markNumber], this.blockSize*x, this.blockSize*y, this.blockSize, this.blockSize);
                 }
             }
-            //天井白くする
-            ctx.fillStyle = "white";
-            ctx.fillRect(0,0,600,100);
             //暗闇デバフの時
             if(this.status.isDark > 0){
                 ctx.fillStyle = "white";
@@ -165,7 +162,7 @@ function () {
             }
             //ctx.fillRect(0, 0, 900, 600);   
             //field[][]を元に描画
-            for(var y = 2; y < this.field.length; y++){
+            for(var y = 1; y < this.field.length; y++){
                 for(var x = 0; x < this.field[y].length; x++){
                     switch(this.field[y][x]){
                         case 0:
@@ -183,13 +180,16 @@ function () {
                     }
                 }
             }
+            //天井白くする
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,600,80);
         }
         //スコア描写
         scoreDraw() {
             var ctx = this.ctx;
             //初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(600,100,400,750);
+            ctx.fillRect(600,80,400,770);
             ctx.fillStyle = "white";
             //ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
@@ -506,16 +506,12 @@ function () {
         finish(){
             this.adm.play(5);
             var ctx = this.ctx;
-            ctx.fillStyle = "white";
-            ctx.fillRect(100, 100, 700, 400);
-            ctx.fillStyle = "black";
-            ctx.strokeRect(100, 100, 750, 400);
-            ctx.drawImage(this.finishImage,100,100,700,500);
+            ctx.drawImage(this.finishImage,100,225,700,500);
             //スコア
             ctx.fillStyle = "black";
             ctx.font = "64px serif";
             ctx.textAlign = "center";
-            ctx.fillText(this.status.score, 450, 300);
+            ctx.fillText(this.status.score, 450, 425);
         }
         //メインループ
         mainLoop(){
