@@ -68,6 +68,8 @@ function () {
         //コンストラクタ
         constructor() {
             this.field = [
+                //最初の2行は見えない部分
+                [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
                 [-1,0,0,0,0,0,0,0,0,0,0,-1],
@@ -140,7 +142,7 @@ function () {
             var ctx = this.ctx;
             //フィールドを初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(50,50,500,800);
+            ctx.fillRect(50,50,500,850);
             //現在ブロックを所持していたら
             if(this.hasBlock){
                 for(var i = 0; i < this.blocks.length; i++){
@@ -182,14 +184,14 @@ function () {
             }
             //天井白くする
             ctx.fillStyle = "white";
-            ctx.fillRect(0,0,600,80);
+            ctx.fillRect(0,0,600,130);
         }
         //スコア描写
         scoreDraw() {
             var ctx = this.ctx;
             //初期化
             ctx.fillStyle = "black";
-            ctx.fillRect(600,80,400,770);
+            ctx.fillRect(600,130,400,770);
             ctx.fillStyle = "white";
             //ctx.fillRect(0, 0, 900, 50);
             ctx.font = "32px serif";
@@ -267,10 +269,10 @@ function () {
                     this.blocks[3] = this.blockGenerate(5,1,ran);
                     break;
                 case 6:
-                    this.blocks[0] = this.blockGenerate(5,0,ran);
-                    this.blocks[1] = this.blockGenerate(4,0,ran);
-                    this.blocks[2] = this.blockGenerate(6,0,ran);
-                    this.blocks[3] = this.blockGenerate(7,0,ran);
+                    this.blocks[0] = this.blockGenerate(5,1,ran);
+                    this.blocks[1] = this.blockGenerate(4,1,ran);
+                    this.blocks[2] = this.blockGenerate(6,1,ran);
+                    this.blocks[3] = this.blockGenerate(7,1,ran);
                     break;
                 case 7:
                     this.blocks[0] = this.blockGenerate(5,0,ran);
@@ -567,7 +569,7 @@ function () {
                     startGame();
                     gameStarted = true;
                     scrollTo({
-                        top: 100,
+                        top: 150,
                         behavior: 'smooth'
                       });
                 }
