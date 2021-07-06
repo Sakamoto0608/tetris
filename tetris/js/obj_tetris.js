@@ -136,6 +136,7 @@ function () {
             this.ctx = canvas.getContext('2d');
             //mode
             this.isUp = true;
+            this.isExtraordinary = false;
         }    
         //マップを描画する関数
         fieldDraw() {
@@ -234,7 +235,8 @@ function () {
             }
             this.hasBlock = true;
             this.blocks = new Array();
-            var ran = Math.floor( Math.random() * 13 )+1;
+            var ran = Math.floor( Math.random() * 7 )+1;
+            if(this.isExtraordinary) ran = ran + 7;
             console.log("case:"+ran);
             this.blocks.isSpin = true;
             switch(ran){
@@ -317,6 +319,7 @@ function () {
                     this.blocks[2] = this.blockGenerate(6,1,5);
                     this.blocks[3] = this.blockGenerate(5,2,5);
                     this.blocks[4] = this.blockGenerate(5,0,5);
+                    this.blocks.isSpin = false;
                     break;
                 case 13:
                     this.blocks[0] = this.blockGenerate(5,1,6);
@@ -328,6 +331,18 @@ function () {
                     this.blocks[6] = this.blockGenerate(7,1,6);
                     this.blocks[7] = this.blockGenerate(8,1,6);
                     this.blocks[8] = this.blockGenerate(9,1,6);
+                    break;
+                case 14:
+                    this.blocks[0] = this.blockGenerate(4,0,7);
+                    this.blocks[1] = this.blockGenerate(5,0,7);
+                    this.blocks[2] = this.blockGenerate(6,0,7);
+                    this.blocks[3] = this.blockGenerate(4,1,7);
+                    this.blocks[4] = this.blockGenerate(5,1,7);
+                    this.blocks[5] = this.blockGenerate(6,1,7);
+                    this.blocks[6] = this.blockGenerate(4,2,7);
+                    this.blocks[7] = this.blockGenerate(5,2,7);
+                    this.blocks[8] = this.blockGenerate(6,2,7);
+                    this.blocks.isSpin = false;
                     break;
             }
             this.fieldDraw();
@@ -611,6 +626,8 @@ function () {
                 while(true){
                     if(!tetris.blocksDrop()) return;
                 }
+            case 32:
+                tetris.isExtraordinary = true;
             case 13:
                 event.preventDefault();
                 if(!gameStarted){
