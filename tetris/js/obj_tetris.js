@@ -234,7 +234,7 @@ function () {
             }
             this.hasBlock = true;
             this.blocks = new Array();
-            var ran = Math.floor( Math.random() * 7 )+1;
+            var ran = Math.floor( Math.random() * 9 )+1;
             console.log("case:"+ran);
             this.blocks.isSpin = true;
             switch(ran){
@@ -280,6 +280,22 @@ function () {
                     this.blocks[2] = this.blockGenerate(6,0,ran);
                     this.blocks[3] = this.blockGenerate(6,1,ran);
                     this.blocks.isSpin = false;
+                    break;
+                case 8:
+                    this.blocks[0] = this.blockGenerate(5,1,1);
+                    this.blocks[1] = this.blockGenerate(6,1,1);
+                    this.blocks[2] = this.blockGenerate(4,0,1);
+                    this.blocks[3] = this.blockGenerate(5,0,1);
+                    this.blocks[4] = this.blockGenerate(4,2,1);
+                    this.blocks[5] = this.blockGenerate(5,2,1);
+                    break;
+                case 9:
+                    this.blocks[0] = this.blockGenerate(5,1,2);
+                    this.blocks[1] = this.blockGenerate(5,0,2);
+                    this.blocks[2] = this.blockGenerate(6,0,2);
+                    this.blocks[3] = this.blockGenerate(4,1,2);
+                    this.blocks[4] = this.blockGenerate(5,2,2);
+                    this.blocks[5] = this.blockGenerate(6,2,2);
                     break;
             }
             this.fieldDraw();
