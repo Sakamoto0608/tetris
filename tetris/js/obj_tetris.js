@@ -202,7 +202,7 @@ function () {
         }
         //ゲームオーバーのチェック
         checkGameover(){
-            for(var y = 0; y < 2; y++){
+            for(var y = 0; y < 3; y++){
                 for(var x = 1; x < this.field[0].length-1;x++){
                     if(this.field[y][x] !== 0){
                         this.gameover = true;
