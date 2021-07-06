@@ -14,29 +14,6 @@ function () {
             return Math.floor(this.spe/10);
         }
     }
-    //Statusクラス
-    class Status {
-        constructor() {
-            this.score = 0;
-            this.isDark = 0;
-            this.dropCount = 0;
-        }
-        addScore(score){
-            this.score += score;
-        }
-        setIsDark(tmp){
-            this.isDark = tmp;
-        }
-        addIsDark(tmp){
-            this.isDark += tmp;
-        }
-        resetDropCount(){
-            this.dropCount = 0;
-        }
-        addDropCount(tmp){
-            this.dropCount += tmp;
-        }
-    }
     //AudioManagerクラス
     class AudioManager {
         constructor(){
@@ -94,7 +71,9 @@ function () {
             this.gameover = false;
             this.blockSize = 50;
             this.dropSpeed = 1000;
-            this.status = new Status();
+            this.score = 0;
+            this.isDark = 0;
+            this.dropCount = 0;
             this.upPosition = 4;
             var imagePass = [
                 "images/black.png",
@@ -135,8 +114,8 @@ function () {
             //コンテキストを取得
             this.ctx = canvas.getContext('2d');
             //mode
-            this.isUp = true;
             this.isExtraordinary = false;
+            this.MAX_UP = 7;
         }    
         //マップを描画する関数
         fieldDraw() {
@@ -155,12 +134,12 @@ function () {
                 }
             }
             //暗闇デバフの時
-            if(this.status.isDark > 0){
+            if(this.isDark > 0){
                 ctx.fillStyle = "white";
                 ctx.font = "32px serif";
                 ctx.textAlign = "center";
                 ctx.fillText("暗転中～～", 300, 300);
-                ctx.fillText("あと"+this.status.isDark+"回置くまで暗闇だよ～～", 300, 350);
+                ctx.fillText("あと"+this.isDark+"回置くまで暗闇だよ～～", 300, 350);
                 return;
             }
             //ctx.fillRect(0, 0, 900, 600);   
@@ -199,7 +178,7 @@ function () {
             ctx.textAlign = "left";
             ctx.fillText("SCORE", 650, 200);
             ctx.textAlign = "right";
-            ctx.fillText(this.status.score, 700, 250);
+            ctx.fillText(this.score, 700, 250);
         }
         //ゲームオーバーのチェック
         checkGameover(){
@@ -370,10 +349,10 @@ function () {
                     this.field[this.blocks[i].y][this.blocks[i].x] = this.blocks[i].spe;
                 }
                 //暗闇中ならカウントを減らす。
-                if(this.status.isDark > 0) this.status.addIsDark(-1);
+                if(this.isDark > 0) this.isDark--;
                 this.blocksRemove();
                 //ブロックせり上がり
-                if(this.isUp) this.status.addDropCount(1);
+                this.dropCount ++;
                 
                 this.fieldDraw();
                 return isDrop;
@@ -524,7 +503,7 @@ function () {
                     console.log(count);
                 }
             }
-            this.status.addScore(count*count*100);
+            this.score += (count * count * 100);
             this.fieldDraw();
             this.scoreDraw();
         }
@@ -535,12 +514,12 @@ function () {
             switch(markSpe){
                 //scoreup
                 case 1:
-                    this.status.addScore(50);
+                    this.score += 50;
                     this.adm.play(4);
                     break;
                 //blackout
                 case 2:
-                    this.status.addIsDark(1);
+                    this.isDark ++;
                     break;
                 //speedup
                 case 3:
@@ -563,7 +542,7 @@ function () {
             var lowerRow = [-1,8,8,8,8,8,8,8,8,8,8,-1];
             lowerRow[ran] = 0;
             this.field[this.field.length-2] = lowerRow;
-            this.status.resetDropCount();
+            this.dropCount = 0;
             this.fieldDraw();
         }
         //ゲームを終了する関数
@@ -575,11 +554,11 @@ function () {
             ctx.fillStyle = "black";
             ctx.font = "64px serif";
             ctx.textAlign = "center";
-            ctx.fillText(this.status.score, 450, 425);
+            ctx.fillText(this.score, 450, 425);
         }
         //メインループ
         mainLoop(){
-            if(this.status.dropCount >= 7) this.blockUp();
+            if(this.dropCount >= this.MAX_UP) this.blockUp();
             if(!this.hasBlock){
                 this.blocksGenerate();
             }else{
