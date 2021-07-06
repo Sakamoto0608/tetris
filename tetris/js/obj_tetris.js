@@ -496,8 +496,7 @@ function () {
         }
         //ブロック列を削除する関数
         blocksRemove() {
-            var upScore = 1000;
-            var rate = 1;
+            var count = 0;
             //y=12は-1で埋めたフィールドなので処理は省く
             for(var y = 0; y < this.field.length-1; y++){
                 //消去可能か格納する変数
@@ -511,7 +510,6 @@ function () {
                 if(isRemove){
                     //該当のy行のブロックを消去、両端(x=0,x=11)は省く
                     for(var x = 1; x < this.field[y].length-1; x++){
-                        //this.field[y][x] = 0;
                         this.blockRemove(x,y);
                         console.log("y=" + y + "の行を削除しました。");
                     }
@@ -522,11 +520,11 @@ function () {
                     }
                     this.field[0] = [-1,0,0,0,0,0,0,0,0,0,0,-1];
                     this.adm.play(3);
-                    upScore = upScore * rate;
-                    rate += 0.5;
+                    count++;
+                    console.log(count);
                 }
             }
-            if(rate > 1.0) this.status.addScore(upScore);
+            this.status.addScore(count*count*100);
             this.fieldDraw();
             this.scoreDraw();
         }
@@ -537,7 +535,7 @@ function () {
             switch(markSpe){
                 //scoreup
                 case 1:
-                    this.status.addScore(500);
+                    this.status.addScore(50);
                     this.adm.play(4);
                     break;
                 //blackout
