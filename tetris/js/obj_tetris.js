@@ -234,7 +234,7 @@ function () {
             }
             this.hasBlock = true;
             this.blocks = new Array();
-            var ran = Math.floor( Math.random() * 9 )+1;
+            var ran = Math.floor( Math.random() * 13 )+1;
             console.log("case:"+ran);
             this.blocks.isSpin = true;
             switch(ran){
@@ -281,13 +281,14 @@ function () {
                     this.blocks[3] = this.blockGenerate(6,1,ran);
                     this.blocks.isSpin = false;
                     break;
+                //extraordinary
                 case 8:
                     this.blocks[0] = this.blockGenerate(5,1,1);
                     this.blocks[1] = this.blockGenerate(6,1,1);
                     this.blocks[2] = this.blockGenerate(4,0,1);
                     this.blocks[3] = this.blockGenerate(5,0,1);
-                    this.blocks[4] = this.blockGenerate(4,2,1);
-                    this.blocks[5] = this.blockGenerate(5,2,1);
+                    this.blocks[4] = this.blockGenerate(6,2,1);
+                    this.blocks[5] = this.blockGenerate(7,2,1);
                     break;
                 case 9:
                     this.blocks[0] = this.blockGenerate(5,1,2);
@@ -296,6 +297,39 @@ function () {
                     this.blocks[3] = this.blockGenerate(4,1,2);
                     this.blocks[4] = this.blockGenerate(5,2,2);
                     this.blocks[5] = this.blockGenerate(6,2,2);
+                    break;
+                case 10:
+                    this.blocks[0] = this.blockGenerate(5,0,3);
+                    this.blocks[1] = this.blockGenerate(4,0,3);
+                    this.blocks[2] = this.blockGenerate(6,0,3);
+                    this.blocks[3] = this.blockGenerate(6,1,3);
+                    this.blocks[4] = this.blockGenerate(6,2,3);
+                    break;
+                case 11:
+                    this.blocks[0] = this.blockGenerate(5,1,4);
+                    this.blocks[1] = this.blockGenerate(4,1,4);
+                    this.blocks[2] = this.blockGenerate(4,2,4);
+                    this.blocks[3] = this.blockGenerate(6,1,4);
+                    this.blocks[4] = this.blockGenerate(6,0,4);
+                    break;
+                case 12:
+                    this.blocks[0] = this.blockGenerate(5,1,5);
+                    this.blocks[1] = this.blockGenerate(4,1,5);
+                    this.blocks[2] = this.blockGenerate(6,1,5);
+                    this.blocks[3] = this.blockGenerate(5,2,5);
+                    this.blocks[4] = this.blockGenerate(5,0,5);
+                    break;
+                case 13:
+                    this.blocks[0] = this.blockGenerate(5,1,6);
+                    this.blocks[1] = this.blockGenerate(4,1,6);
+                    this.blocks[2] = this.blockGenerate(3,1,6);
+                    this.blocks[3] = this.blockGenerate(2,1,6);
+                    this.blocks[4] = this.blockGenerate(1,1,6);
+                    this.blocks[5] = this.blockGenerate(6,1,6);
+                    this.blocks[6] = this.blockGenerate(7,1,6);
+                    this.blocks[7] = this.blockGenerate(8,1,6);
+                    this.blocks[8] = this.blockGenerate(9,1,6);
+                    this.blocks[9] = this.blockGenerate(10,1,6);
                     break;
             }
             this.fieldDraw();
